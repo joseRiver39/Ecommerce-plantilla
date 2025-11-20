@@ -14,18 +14,19 @@ export const products: Product[] = [
   {
     "id": "1",
     "name": "Jean Skinny High Waist",
-    "price": "150000",
+    "price": 150000,
     "category": "mujer",
     "image": "/jeans-skinny-woman.jpg",
     "isNew": true,
-    "stock": "50"
+    "stock": 29
   },
   {
     "id": "2",
     "name": "Jean Slim Fit Clásico",
     "price": 149900,
     "category": "hombre",
-    "image": "/jeans-slim-man.jpg"
+    "image": "/jeans-slim-man.jpg",
+    "stock": 24
   },
   {
     "id": "3",
@@ -34,7 +35,8 @@ export const products: Product[] = [
     "category": "mujer",
     "image": "/jeans-mom-fit.jpg",
     "isSale": true,
-    "originalPrice": 159900
+    "originalPrice": 159900,
+    "stock": 37
   },
   {
     "id": "4",
@@ -42,7 +44,8 @@ export const products: Product[] = [
     "price": 189900,
     "category": "hombre",
     "image": "/jeans-straight-man.jpg",
-    "isNew": true
+    "isNew": true,
+    "stock": 38
   },
   {
     "id": "5",
