@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone()
-  const isAuthenticated = request.cookies.get('auth_token') === 'my_secret_token'
+  const isAuthenticated = request.cookies.get('auth_token')?.value === 'my_secret_token'
 
   if (url.pathname.startsWith('/admin') && !isAuthenticated && url.pathname !== '/admin/login') {
     url.pathname = '/admin/login'

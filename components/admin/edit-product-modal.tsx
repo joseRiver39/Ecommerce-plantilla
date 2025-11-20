@@ -18,7 +18,7 @@ export function EditProductModal({ product, isOpen, onClose, onSave }) {
 
   useEffect(() => {
     if (product) {
-      setFormData({ price: product.price, stock: "45" }) // Assuming stock is available in product object
+      setFormData({ price: product.price, stock: product.stock || '45' })
     }
   }, [product])
 
