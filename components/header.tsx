@@ -64,6 +64,9 @@ export function Header() {
           <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
             NOSOTROS
           </Link>
+          <Link href="/admin" className="text-sm font-medium hover:text-primary transition-colors">
+            ADMIN
+          </Link>
         </nav>
 
         {/* Actions */}

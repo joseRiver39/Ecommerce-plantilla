@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { categories } from "@/lib/data"
+import { categories } from "@/lib/custom-data"
 import { Button } from "@/components/ui/button"
 
 export function CategoryGrid() {
