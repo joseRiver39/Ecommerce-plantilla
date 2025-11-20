@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { Plus, Search, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,14 +12,50 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { products } from "@/lib/data"
+import { products as initialProducts } from "@/lib/data"
 import { Badge } from "@/components/ui/badge"
+import { EditProductModal } from "@/components/admin/edit-product-modal"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Inventario de Productos",
+}
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState(initialProducts)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
+
+  const handleOpenModal = (product) => {
+    setSelectedProduct(product)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null)
+    setIsModalOpen(false)
+  }
+
+  const handleSave = (productId, updatedData) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((p) =>
+        p.id === productId ? { ...p, ...updatedData } : p
+      )
+    )
+  }
+
   return (
     <div className="space-y-8">
+      <EditProductModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSave}
+      />
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-primary">Inventario de Productos</h1>
+        <h1 className="text-3xl font-bold text-primary">
+          Inventario de Productos
+        </h1>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
           Nuevo Producto
@@ -71,8 +110,8 @@ export default function ProductsPage() {
                 <TableCell>${product.price.toLocaleString("es-CO")}</TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm">45 unid.</span>
-                    {Math.random() > 0.7 && (
+                    <span className="text-sm">{product.stock || 45} unid.</span>
+                    {product.stock < 10 && (
                       <Badge variant="destructive" className="w-fit text-[10px] px-1 py-0">
                         Bajo Stock
                       </Badge>
@@ -94,7 +133,7 @@ export default function ProductsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleOpenModal(product)}>
                         <Pencil className="mr-2 h-4 w-4" /> Editar
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive">
