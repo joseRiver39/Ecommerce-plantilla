@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -32,6 +32,17 @@ export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
   const router = useRouter()
   const [isProcessing, setIsProcessing] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isMounted && items.length === 0) {
+      router.push("/cart")
+    }
+  }, [items, isMounted, router])
 
   const shippingCost = subtotal > 200000 ? 0 : 15000
   const total = subtotal + shippingCost
@@ -55,9 +66,8 @@ export default function CheckoutPage() {
     router.push("/checkout/success")
   }
 
-  if (items.length === 0) {
-    router.push("/cart")
-    return null
+  if (!isMounted || items.length === 0) {
+    return <div className="container mx-auto px-4 py-24 text-center">Cargando...</div>
   }
 
   return (
