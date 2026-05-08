@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, use } from "react"
-import { notFound } from "next/navigation"
+import { notFound, useRouter } from "next/navigation"
 import { Star, Truck, ShieldCheck, Minus, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -14,6 +14,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const { id } = use(params)
   const product = products.find((p) => p.id === id)
   const { addItem } = useCart()
+  const router = useRouter()
 
   const [selectedSize, setSelectedSize] = useState<string>("")
   const [quantity, setQuantity] = useState(1)
@@ -37,7 +38,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
       description: `${product.name} - Talla ${selectedSize}`,
       action: {
         label: "Ver Carrito",
-        onClick: () => (window.location.href = "/cart"),
+        onClick: () => router.push("/cart"),
       },
     })
   }
