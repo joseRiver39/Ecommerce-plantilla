@@ -16,7 +16,7 @@ export const products: Product[] = [
     "name": "Jean Skinny High Waist",
     "price": 150000,
     "category": "mujer",
-    "image": "/jeans-skinny-woman.jpg",
+    "image": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop",
     "isNew": true,
     "stock": 29
   },
@@ -33,7 +33,7 @@ export const products: Product[] = [
     "name": "Jean Mom Fit Vintage",
     "price": 119900,
     "category": "mujer",
-    "image": "/jeans-mom-fit.jpg",
+    "image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800&auto=format&fit=crop",
     "isSale": true,
     "originalPrice": 159900,
     "stock": 37
@@ -52,7 +52,8 @@ export const products: Product[] = [
     "name": "Jean Wide Leg",
     "price": 139900,
     "category": "mujer",
-    "image": "/jeans-wide-leg.jpg"
+    "image": "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=800&auto=format&fit=crop",
+    "stock": 110
   },
   {
     "id": "6",
@@ -73,6 +74,18 @@ export const products: Product[] = [
     "name": "Jean Rotos Destroyed",
     "price": 145900,
     "category": "hombre",
-    "image": "/jeans-ripped-man.jpg"
+    "image": "/jeans-ripped-man.jpg",
+  }
+
+
+
+  ,
+  {
+    "id": "prod-1778120062905",
+    "name": "Bermuda",
+    "price": 45000,
+    "stock": 100,
+    "category": "hombre",
+    "image": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%2Fid%2FOIP.4UxOTipqKZw6AJ3tNd51zQHaHa%3Fpid%3DApi&f=1&ipt=77397e31f6152343cb6e30bf8a4f86024d84e94dcfe657ad2be81301dac4e7bb&ipo=images"
   }
 ];

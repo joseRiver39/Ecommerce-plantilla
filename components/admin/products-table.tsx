@@ -19,9 +19,14 @@ import type { Product } from "@/lib/data"
 export function ProductsTable({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState(initialProducts)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  
+  // Search and Filter State
+  const [searchTerm, setSearchTerm] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
 
-  const handleOpenModal = (product) => {
+  const handleOpenModal = (product: Product | null) => {
     setSelectedProduct(product)
     setIsModalOpen(true)
   }
@@ -31,10 +36,23 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
     setIsModalOpen(false)
   }
 
-  const handleSave = async (productId, updatedData) => {
-    const updatedProducts = products.map((p) =>
-      p.id === productId ? { ...p, ...updatedData } : p
-    );
+  const handleSave = async (productId: string | null, updatedData: Partial<Product>) => {
+    let updatedProducts;
+    
+    if (productId) {
+      // Edit existing product
+      updatedProducts = products.map((p) =>
+        p.id === productId ? { ...p, ...updatedData } : p
+      );
+    } else {
+      // Create new product
+      const newProduct = {
+        id: `prod-${Date.now()}`,
+        ...updatedData
+      } as Product;
+      updatedProducts = [...products, newProduct];
+    }
+
     setProducts(updatedProducts);
 
     try {
@@ -53,9 +71,21 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
       console.log('Products saved successfully');
     } catch (error) {
       console.error(error);
-      // Here you could show an error notification to the user
     }
   };
+
+  // Filtering Logic
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = categoryFilter === "all" || product.category.toLowerCase() === categoryFilter.toLowerCase()
+    
+    let matchesStatus = true
+    if (statusFilter === "activo") matchesStatus = (product.stock ?? 0) > 0
+    if (statusFilter === "sin_stock") matchesStatus = (product.stock ?? 0) === 0
+    // Note: "borrador" is not yet implemented in the data model, so we treat it as always true for now or just skip
+    
+    return matchesSearch && matchesCategory && matchesStatus
+  })
 
   return (
     <div className="space-y-8">
@@ -69,7 +99,7 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
         <h1 className="text-3xl font-bold text-primary">
           Inventario de Productos
         </h1>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => handleOpenModal(null)}>
           <Plus className="h-4 w-4" />
           Nuevo Producto
         </Button>
@@ -78,18 +108,31 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
       <div className="flex items-center gap-4 bg-card p-4 rounded-lg border shadow-sm">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar productos..." className="pl-10" />
+          <Input 
+            placeholder="Buscar productos..." 
+            className="pl-10" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <select className="h-10 px-3 rounded-md border border-input bg-background text-sm">
-          <option>Todas las categorías</option>
-          <option>Hombre</option>
-          <option>Mujer</option>
+        <select 
+          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+        >
+          <option value="all">Todas las categorías</option>
+          <option value="hombre">Hombre</option>
+          <option value="mujer">Mujer</option>
+          <option value="accesorios">Accesorios</option>
         </select>
-        <select className="h-10 px-3 rounded-md border border-input bg-background text-sm">
-          <option>Estado: Todos</option>
-          <option>Activo</option>
-          <option>Borrador</option>
-          <option>Sin Stock</option>
+        <select 
+          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="all">Estado: Todos</option>
+          <option value="activo">Activo</option>
+          <option value="sin_stock">Sin Stock</option>
         </select>
       </div>
 
@@ -107,7 +150,7 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>
                   <div className="h-12 w-12 rounded-md bg-gray-100 overflow-hidden">
@@ -123,8 +166,8 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
                 <TableCell>${product.price.toLocaleString("es-CO")}</TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm">{product.stock || 45} unid.</span>
-                    {product.stock < 10 && (
+                    <span className="text-sm">{product.stock ?? 0} unid.</span>
+                    {(product.stock ?? 0) < 10 && (
                       <Badge variant="destructive" className="w-fit text-[10px] px-1 py-0">
                         Bajo Stock
                       </Badge>
@@ -132,10 +175,11 @@ export function ProductsTable({ initialProducts }: { initialProducts: Product[] 
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    Activo
+                  <Badge variant="outline" className={(product.stock ?? 0) > 0 ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}>
+                    {(product.stock ?? 0) > 0 ? "Activo" : "Sin Stock"}
                   </Badge>
                 </TableCell>
+
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
